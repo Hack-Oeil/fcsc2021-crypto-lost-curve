@@ -4,7 +4,7 @@ J’ai perdu l’équation de ma courbe elliptique : pouvez-vous m’aider à la
 
 
 
-Auteurs : Auteur : [Cryptanalyse](https://twitter.com/Cryptanalyse)
+Auteur : [Cryptanalyse](https://twitter.com/Cryptanalyse)
 
 Origine : [Lost Curve](https://hackropole.fr/fr/challenges/crypto/fcsc2021-crypto-lost-curve/)
 
