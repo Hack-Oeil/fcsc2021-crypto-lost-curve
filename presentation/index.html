@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="fr">
+    <meta charset="UTF-8">
+    <!--Page Title-->
+    <title>Hack-Oeil - Les CTFs de Cyrhades</title>
+    <!--Meta Keywords and Description-->
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <link rel="shortcut icon" href="./assets/images/favicon.ico" title="Favicon" />
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="./assets/css/github.min.css">
+    <script src="./assets/js/highlight.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Vérifie si la fenêtre est dans une iframe
+            if (window.self !== window.top) {
+                document.querySelectorAll('a').forEach((link) => {
+                    link.addEventListener('click', (event) => {
+                        const a = event.target.closest('a[href^="http"]');
+                        if (a) {
+                            event.preventDefault();
+                            window.parent.postMessage({
+                                type: "open-external",
+                                url: a.href
+                            }, "*");
+                        }
+                    });
+                });
+            }
+            // Active la coloration syntaxique :
+            if (window.hljs) {
+                hljs.highlightAll();
+            } else {
+                console.error("Highlight.js non chargé !");
+            }
+        });
+    </script>
+</head>
+
+<body>
+
+    <div id="wrapper">
+        <!--Main Content Area-->
+        <main id="content">
+            <!--Ctf-->
+            <section class="ctf scrollto">
+                <article class="row clearfix">
+                    <div class="col-1">
+                        <div class="section-heading">
+                            <h3>Challenge #212</h3>
+                            <h2 class="section-title">Lost Curve</h2>
+                            <p>
+                                J’ai perdu l’équation de ma courbe elliptique : pouvez-vous m’aider à la retrouver ?
+                            </p>
+                            <h4>Fichier à étudier</h4>
+                            <p>
+                                - lost_curve.py
+                            </p>
+                            <pre><code class="language-python">from fastecdsa.curve import Curve
+from fastecdsa.point import Point
+from Crypto.Util.number import getPrime
+from Crypto.Random.random import randrange
+
+BITS = 80
+
+while True:
+	p = getPrime(BITS)
+	if p % 4 == 3:
+		break
+
+a, b = randrange(1, p), randrange(1, p)
+C = Curve("FCSC", p, a, b, 0, 0, 0)
+
+while True:
+	xP = randrange(1, p)
+	yP = (xP ** 3 + a * xP + b) % p
+	if pow(yP, (p - 1) // 2, p) == 1:
+		break
+
+yP = pow(yP, (p + 1) // 4, p)
+assert (xP ** 3 + a * xP + b - yP ** 2) % p == 0
+
+P = Point(xP, yP, C)
+Q = 2 * P
+
+print("Can you find my secret curve equation: y^2 = x^3 + a*x + b (mod p)?")
+print("I will give you two points:")
+print(f"P = ({P.x}, {P.y})")
+print(f"Q = ({Q.x}, {Q.y})")
+
+try:
+	a = int(input(">>> a = "))
+	b = int(input(">>> b = "))
+	p = int(input(">>> p = "))
+
+	C = Curve("Check", p, a, b, 0, 0, 0)
+	check  = True
+	check &= p.bit_length() >= BITS
+	check &= (P.x ** 3 + a * P.x + b - P.y ** 2) % p == 0
+	check &= (Q.x ** 3 + a * Q.x + b - Q.y ** 2) % p == 0
+	check &= (2 * Point(P.x, P.y, C) == Point(Q.x, Q.y, C))
+	if check:
+		print("Congratulations!! Here is your flag:")
+		print(open("flag.txt", "r").read())
+	else:
+		print("That's not it!")
+except:
+	print("That's not it!")
+</code></pre>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="row clearfix">
+                    <div class="col-1">
+                        <div class="section-heading">
+                            <h3>FCSC 2021</h3>
+                            <h2 class="section-title">Hackropole</h2>
+                            <p class="section-subtitle">
+                                Lien officiel :
+                                <a target="_blank"
+                                    href="https://hackropole.fr/fr/challenges/crypto/fcsc2021-crypto-lost-curve/">FCSC
+                                    2021 -
+                                    Lost Curve
+                                </a>
+                                <br />
+                                Auteur: <a target="_blank" href="https://twitter.com/Cryptanalyse">Cryptanalyse</a>
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="row clearfix">
+                    <div class="col-1">
+                        <div class="section-heading">
+                            <h3>Apprentissage</h3>
+                            <h2 class="section-title">Documentations et Vidéos</h2>
+                            <p class="section-subtitle">
+                                Aucune documentation pour le moment
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="row clearfix">
+                    <div class="col-1">
+                        <div class="section-heading">
+                            <h3>Aide</h3>
+                            <h2 class="section-title">Conseils et indices</h2>
+                            <p class="section-subtitle">
+                                <a target="_blank"
+                                    href="https://discord.com/channels/1175764392307077120/1175764601716092948">Fil sur
+                                    le Discord</a>
+                            </p>
+                        </div>
+                    </div>
+                </article>
+            </section>
+            <!--End of Ctf-->
+        </main>
+        <!--End Main Content Area-->
+
+        <a id="scrollUp" href="#wrapper" style="position: fixed; z-index: 1000;"
+            aria-label="Remonter en haut de la page" title="Remonter en tête de site"></a>
+    </div>
+</body>
+
+</html>
